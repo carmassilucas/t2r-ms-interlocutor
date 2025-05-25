@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/interlocutors")
 public class InterlocutorResource {
 
-
     private final InterlocutorService service;
 
     public InterlocutorResource(InterlocutorService service) {
@@ -23,12 +22,7 @@ public class InterlocutorResource {
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody @Valid CreateInterlocutor dto) {
-        try {
-            this.service.create(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
-        }
-
+        this.service.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
