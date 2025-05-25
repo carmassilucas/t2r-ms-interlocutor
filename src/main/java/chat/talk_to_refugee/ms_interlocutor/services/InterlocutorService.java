@@ -22,7 +22,8 @@ public class InterlocutorService {
     }
 
     public void create(CreateInterlocutor dto) {
-        if (LocalDate.now().minusYears(18).isBefore(dto.birthDate())) {
+        var birthDate = LocalDate.parse(dto.birthDate());
+        if (LocalDate.now().minusYears(18).isBefore(birthDate)) {
             throw new UnderageException();
         }
 

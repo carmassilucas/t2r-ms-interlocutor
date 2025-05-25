@@ -62,10 +62,10 @@ public class Interlocutor implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Interlocutor(String fullName, String aboutMe, LocalDate birthDate, String email, String state, String city) {
+    public Interlocutor(String fullName, String aboutMe, String birthDate, String email, String state, String city) {
         this.fullName = fullName;
         this.aboutMe = aboutMe;
-        this.birthDate = birthDate;
+        this.birthDate = LocalDate.parse(birthDate);
         this.email = email;
         this.state = state;
         this.city = city;

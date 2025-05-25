@@ -4,17 +4,26 @@ import chat.talk_to_refugee.ms_interlocutor.entities.Interlocutor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDate;
-
 public record CreateInterlocutor(
-        @NotBlank String fullName,
+        @NotBlank
+        String fullName,
+
         String aboutMe,
-        @NotNull LocalDate birthDate,
-        @NotBlank @Email String email,
-        @NotBlank @Length(min = 8, max = 64) String password,
+
+        @NotNull @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$")
+        String birthDate,
+
+        @Email @NotBlank
+        String email,
+
+        @NotBlank @Length(min = 8, max = 64)
+        String password,
+
         String state,
+
         String city
 ) {
     public Interlocutor toInterlocutor() {
