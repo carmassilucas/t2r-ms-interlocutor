@@ -1,0 +1,18 @@
+services:
+
+  db:
+    image: postgres:latest
+    container_name: t2r_ms_interlocutor
+    environment:
+      POSTGRES_USER: t2r_db_user
+      POSTGRES_PASSWORD: t2r_db_pass
+      POSTGRES_DB: t2r_ms_interlocutor
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
