@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDate;
+
 public record CreateInterlocutor(
         @NotBlank
         String fullName,
@@ -27,6 +29,13 @@ public record CreateInterlocutor(
         String city
 ) {
     public Interlocutor toInterlocutor() {
-        return new Interlocutor(fullName, aboutMe, birthDate, email, state, city);
+        return  Interlocutor.builder()
+                    .fullName(fullName)
+                    .aboutMe(aboutMe)
+                    .birthDate(LocalDate.parse(birthDate))
+                    .email(email)
+                    .state(state)
+                    .city(city)
+                    .build();
     }
 }
