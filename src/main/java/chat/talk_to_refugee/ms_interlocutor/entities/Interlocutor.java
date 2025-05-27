@@ -31,7 +31,7 @@ public @Data class Interlocutor implements Serializable {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "about_me")
+    @Column(name = "about_me", columnDefinition = "TEXT")
     private String aboutMe;
 
     @Column(name = "birth_date", nullable = false)
@@ -48,6 +48,10 @@ public @Data class Interlocutor implements Serializable {
 
     @Column(name = "city")
     private String city;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id", nullable = false, updatable = false)
+    private InterlocutorType type;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
