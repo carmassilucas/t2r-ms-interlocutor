@@ -1,15 +1,17 @@
 package chat.talk_to_refugee.ms_interlocutor.services;
 
-import chat.talk_to_refugee.ms_interlocutor.exceptions.*;
+import chat.talk_to_refugee.ms_interlocutor.exceptions.EmailInUseException;
+import chat.talk_to_refugee.ms_interlocutor.exceptions.EmptyBodyException;
+import chat.talk_to_refugee.ms_interlocutor.exceptions.NotFoundException;
+import chat.talk_to_refugee.ms_interlocutor.exceptions.UnderageException;
 import chat.talk_to_refugee.ms_interlocutor.repositories.InterlocutorRepository;
 import chat.talk_to_refugee.ms_interlocutor.resources.dtos.CreateInterlocutor;
 import chat.talk_to_refugee.ms_interlocutor.resources.dtos.UpdateInterlocutor;
-import jakarta.transaction.Transactional;
+import chat.talk_to_refugee.ms_interlocutor.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -38,7 +40,6 @@ public class InterlocutorService {
         this.repository.save(interlocutor);
     }
 
-    @Transactional
     public void update(UpdateInterlocutor dto, UUID id) {
         if (dto.isEmpty()) {
             throw new EmptyBodyException();
@@ -46,31 +47,8 @@ public class InterlocutorService {
 
         var interlocutor = this.repository.findById(id).orElseThrow(NotFoundException::new);
 
-        copyNonNullProperties(dto, interlocutor);
+        CustomBeanUtils.copyNonNullProperties(dto, interlocutor);
 
         this.repository.save(interlocutor);
-    }
-
-    private static void copyNonNullProperties(Object source, Object target) {
-        for (Field sourceField : source.getClass().getDeclaredFields()) {
-            sourceField.setAccessible(true);
-            try {
-                var value = sourceField.get(source);
-
-                if (value != null && !value.toString().isBlank()) {
-                    var targetField = target.getClass().getDeclaredField(sourceField.getName());
-                    targetField.setAccessible(true);
-
-                    if (targetField.getType().equals(LocalDate.class) && value instanceof String) {
-                        targetField.set(target, LocalDate.parse((String) value));
-                        continue;
-                    }
-
-                    targetField.set(target, value);
-                }
-            } catch (IllegalAccessException | NoSuchFieldException e) {
-                throw new CommonException();
-            }
-        }
     }
 }
