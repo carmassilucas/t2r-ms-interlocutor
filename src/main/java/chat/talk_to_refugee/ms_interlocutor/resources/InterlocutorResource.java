@@ -1,8 +1,6 @@
 package chat.talk_to_refugee.ms_interlocutor.resources;
 
-import chat.talk_to_refugee.ms_interlocutor.resources.dtos.CreateInterlocutor;
-import chat.talk_to_refugee.ms_interlocutor.resources.dtos.ProfileResponse;
-import chat.talk_to_refugee.ms_interlocutor.resources.dtos.UpdateInterlocutor;
+import chat.talk_to_refugee.ms_interlocutor.resources.dtos.*;
 import chat.talk_to_refugee.ms_interlocutor.services.InterlocutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,5 +35,12 @@ public class InterlocutorResource {
     public ResponseEntity<ProfileResponse> profile(@PathVariable(name = "id") UUID id) {
         var profile = this.service.profile(id);
         return ResponseEntity.ok(profile);
+    }
+
+    @GetMapping(value = "/search/{id}")
+    public ResponseEntity<List<SearchResponse>> search(@PathVariable(name = "id") UUID id,
+                                                       @RequestBody SearchRequest dto) {
+        var result = this.service.search(dto, id);
+        return ResponseEntity.ok(result);
     }
 }
