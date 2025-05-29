@@ -6,6 +6,7 @@ import chat.talk_to_refugee.ms_interlocutor.exceptions.NotFoundException;
 import chat.talk_to_refugee.ms_interlocutor.exceptions.UnderageException;
 import chat.talk_to_refugee.ms_interlocutor.repositories.InterlocutorRepository;
 import chat.talk_to_refugee.ms_interlocutor.resources.dtos.CreateInterlocutor;
+import chat.talk_to_refugee.ms_interlocutor.resources.dtos.ProfileResponse;
 import chat.talk_to_refugee.ms_interlocutor.resources.dtos.UpdateInterlocutor;
 import chat.talk_to_refugee.ms_interlocutor.utils.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,11 @@ public class InterlocutorService {
         CustomBeanUtils.copyNonNullProperties(dto, interlocutor);
 
         this.repository.save(interlocutor);
+    }
+
+    public ProfileResponse profile(UUID id) {
+        var interlocutor = this.repository.findById(id).orElseThrow(NotFoundException::new);
+
+        return ProfileResponse.fromInterlocutor(interlocutor);
     }
 }
