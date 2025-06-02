@@ -6,19 +6,37 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
-public record CreateRequest(@NotBlank String fullName,
-                            String aboutMe,
-                            @NotNull @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$") String birthDate,
-                            @Email @NotBlank String email,
-                            @NotBlank @Length(min = 8, max = 64) String password,
-                            String state,
-                            String city,
-                            @NotNull InterlocutorType.Values type
-) {
+
+@NoArgsConstructor
+@AllArgsConstructor
+public @Data class CreateRequest {
+
+    @NotBlank
+    String fullName;
+
+    String aboutMe;
+
+    @NotBlank @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$")
+    String birthDate;
+
+    @Email @NotBlank
+    String email;
+
+    @NotBlank @Length(min = 8, max = 64)
+    String password;
+
+    String state;
+
+    String city;
+
+    @NotNull InterlocutorType.Values type;
 
     public Interlocutor toInterlocutor() {
         return Interlocutor.builder()

@@ -1,10 +1,8 @@
 package chat.talk_to_refugee.ms_interlocutor.services;
 
+import chat.talk_to_refugee.ms_interlocutor.clients.LocalitiesClient;
 import chat.talk_to_refugee.ms_interlocutor.entities.InterlocutorType;
-import chat.talk_to_refugee.ms_interlocutor.exceptions.EmailInUseException;
-import chat.talk_to_refugee.ms_interlocutor.exceptions.EmptyBodyException;
-import chat.talk_to_refugee.ms_interlocutor.exceptions.NotFoundException;
-import chat.talk_to_refugee.ms_interlocutor.exceptions.UnderageException;
+import chat.talk_to_refugee.ms_interlocutor.exceptions.*;
 import chat.talk_to_refugee.ms_interlocutor.repositories.InterlocutorRepository;
 import chat.talk_to_refugee.ms_interlocutor.resources.dtos.*;
 import chat.talk_to_refugee.ms_interlocutor.utils.CustomBeanUtils;
@@ -23,21 +21,16 @@ public class InterlocutorService {
 
     private final InterlocutorRepository repository;
     private final PasswordEncoder encoder;
+    private final LocalitiesClient localitiesApi;
 
     public void create(CreateRequest dto) {
-        var birthDate = LocalDate.parse(dto.birthDate());
-        if (LocalDate.now().minusYears(18).isBefore(birthDate)) {
-            throw new UnderageException();
-        }
+        validateAge(dto.getBirthDate());
+        validateEmail(dto.getEmail());
 
-        if (this.repository.findByEmail(dto.email()).isPresent()) {
-            throw new EmailInUseException();
-        }
-
-        //todo: validar se cidade e estado existem
+        handleStateAndCity(dto);
 
         var interlocutor = dto.toInterlocutor();
-        interlocutor.setPassword(encoder.encode(dto.password()));
+        interlocutor.setPassword(encoder.encode(dto.getPassword()));
 
         this.repository.save(interlocutor);
     }
@@ -80,4 +73,50 @@ public class InterlocutorService {
                 )
         ).toList();
     }
+
+    private void validateAge(String birthDateStr) {
+        var birthDate = LocalDate.parse(birthDateStr);
+        if (LocalDate.now().minusYears(18).isBefore(birthDate)) {
+            throw new UnderageException();
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (this.repository.findByEmail(email).isPresent()) {
+            throw new EmailInUseException();
+        }
+    }
+
+    private void handleStateAndCity(CreateRequest dto) {
+        boolean filledState = dto.getState() != null && !dto.getState().isBlank();
+        boolean filledCity = dto.getCity() != null && !dto.getCity().isBlank();
+
+        if (!filledState && filledCity) {
+            throw new StateEmptyException();
+        }
+
+        if (!filledState) {
+            dto.setState(null);
+            dto.setCity(null);
+            return;
+        }
+
+        var cities = this.localitiesApi.findByUF(dto.getState());
+
+        if (cities.isEmpty()) {
+            throw new StateNotFoundException();
+        }
+
+        if (filledCity) {
+            var city = cities.stream()
+                    .filter(localitie -> localitie.name().equalsIgnoreCase(dto.getCity()))
+                    .findFirst()
+                    .orElseThrow(CityNotFoundException::new);
+
+            dto.setCity(city.name());
+        } else {
+            dto.setCity(null);
+        }
+    }
+
 }
