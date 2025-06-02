@@ -24,7 +24,7 @@ public class InterlocutorService {
     private final InterlocutorRepository repository;
     private final PasswordEncoder encoder;
 
-    public void create(CreateInterlocutor dto) {
+    public void create(CreateRequest dto) {
         var birthDate = LocalDate.parse(dto.birthDate());
         if (LocalDate.now().minusYears(18).isBefore(birthDate)) {
             throw new UnderageException();
@@ -42,7 +42,7 @@ public class InterlocutorService {
         this.repository.save(interlocutor);
     }
 
-    public void update(UpdateInterlocutor dto, UUID id) {
+    public void update(UpdateRequest dto, UUID id) {
         if (dto.isEmpty()) {
             throw new EmptyBodyException();
         }

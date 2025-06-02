@@ -2,14 +2,14 @@ package chat.talk_to_refugee.ms_interlocutor.utils;
 
 import chat.talk_to_refugee.ms_interlocutor.entities.Interlocutor;
 import chat.talk_to_refugee.ms_interlocutor.exceptions.CommonException;
-import chat.talk_to_refugee.ms_interlocutor.resources.dtos.UpdateInterlocutor;
+import chat.talk_to_refugee.ms_interlocutor.resources.dtos.UpdateRequest;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 public class CustomBeanUtils {
 
-    public static void copyNonNullProperties(UpdateInterlocutor dto, Interlocutor interlocutor) {
+    public static void copyNonNullProperties(UpdateRequest dto, Interlocutor interlocutor) {
         for (Field dtoField : dto.getClass().getDeclaredFields()) {
             dtoField.setAccessible(true);
             try {

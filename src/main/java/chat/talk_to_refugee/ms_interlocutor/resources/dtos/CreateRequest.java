@@ -10,14 +10,14 @@ import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
-public record CreateInterlocutor(@NotBlank String fullName,
-                                 String aboutMe,
-                                 @NotNull @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$") String birthDate,
-                                 @Email @NotBlank String email,
-                                 @NotBlank @Length(min = 8, max = 64) String password,
-                                 String state,
-                                 String city,
-                                 @NotNull InterlocutorType.Values type
+public record CreateRequest(@NotBlank String fullName,
+                            String aboutMe,
+                            @NotNull @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$") String birthDate,
+                            @Email @NotBlank String email,
+                            @NotBlank @Length(min = 8, max = 64) String password,
+                            String state,
+                            String city,
+                            @NotNull InterlocutorType.Values type
 ) {
 
     public Interlocutor toInterlocutor() {

@@ -19,14 +19,14 @@ public class InterlocutorResource {
     private final InterlocutorService service;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid CreateInterlocutor dto) {
+    public ResponseEntity<Void> create(@RequestBody @Valid CreateRequest dto) {
         this.service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Void> update(@PathVariable(name = "id") UUID id,
-                                       @RequestBody @Valid UpdateInterlocutor dto) {
+                                       @RequestBody @Valid UpdateRequest dto) {
         this.service.update(dto, id);
         return ResponseEntity.noContent().build();
     }
